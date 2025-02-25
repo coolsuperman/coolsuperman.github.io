@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>买车线索提交表单</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .response {
+            margin-top: 20px;
+            text-align: center;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>买车线索提交</h1>
+        <form id="leadForm">
+            <input type="text" id="name" placeholder="姓名" required>
+            <input type="email" id="email" placeholder="电子邮件" required>
+            <input type="tel" id="phone" placeholder="电话号码" required>
+            <input type="text" id="carModel" placeholder="感兴趣的车型" required>
+            <textarea id="message" placeholder="留言" rows="4"></textarea>
+            <button type="submit">提交线索</button>
+        </form>
+        <div class="response" id="responseMessage"></div>
+    </div>
+
+    <script>
+        // 解析URL参数
+        function getUrlParameter(name) {
+            const url = window.location.href;
+            const reg = new RegExp('[?&]' + name + '=([^&#]*)', 'i');
+            const result = reg.exec(url);
+            return result ? decodeURIComponent(result[1]) : null;
+        }
+
+        // 获取ext参数
+        const extParam = getUrlParameter('ext');
+
+        document.getElementById('leadForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // 防止表单默认提交
+
+            // 获取表单数据
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const carModel = document.getElementById('carModel').value;
+            const message = document.getElementById('message').value;
+
+            // 构建请求URL
+            const requestUrl = `http://www.baidu.com/commit?ext=${extParam}`;
+
+            // 模拟向请求URL发送数据
+            fetch(requestUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+		    'Access-Control-Allow-Origin':'*',
+		    'Access-Control-Allow-Methods':'POST, GET, OPTIONS, DELETE',
+		    'Access-Control-Expose-Headers':'*'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    carModel: carModel,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseMessage = `感谢您提交的线索，${name}！我们会尽快与您联系。`;
+                document.getElementById('responseMessage').innerText = responseMessage;
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                document.getElementById('responseMessage').innerText = '提交失败，请稍后重试。';
+            });
+
+            // 重置表单
+            document.getElementById('leadForm').reset();
+        });
+    </script>
+</body>
+</html>
